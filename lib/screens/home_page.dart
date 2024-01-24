@@ -11,11 +11,28 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Tasks')),
-      body: SubjectsGrid(),
+      appBar: AppBar(
+        title: const Text('Tasks', style: TextStyle(color: Colors.black54,fontSize: 40),),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            color: Color(0xFF80D8FF),
+          ),
+        ),
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          color: Color(0xFFE0F7FA),
+        ),
+        child: const Padding(
+          padding: EdgeInsets.only(top: 40.0), // Adjust the top margin as needed
+          child: SubjectsGrid(),
+        ),
+      ),
     );
   }
 }
+
+
 
 class SubjectsGrid extends StatefulWidget {
   const SubjectsGrid({Key? key}) : super(key: key);
@@ -98,21 +115,28 @@ class _SubjectsGridState extends State<SubjectsGrid> {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => const DetailPage(),
+            builder: (context) => DetailPage(sub: subject),
           ),
         );
       },
       child: Container(
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
-          color: subject.color.withOpacity(0.8),
           borderRadius: BorderRadius.circular(15),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              subject.color.withOpacity(0.8),
+              Colors.white,
+            ],
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
-              spreadRadius: 2,
-              blurRadius: 5,
-              offset: const Offset(0, 3),
+              color: Colors.black.withOpacity(0.2),
+              spreadRadius: -2,
+              blurRadius: 6,
+              offset: const Offset(-4, -4), // Adjust these values for the desired 3D effect
             ),
           ],
         ),
@@ -146,12 +170,14 @@ class _SubjectsGridState extends State<SubjectsGrid> {
   }
 
 
+
+
   Widget _buildTaskStatus(
-      Color bgColor,
-      Color txColor,
-      String text,
-      Color textColor,
-      ) {
+    Color bgColor,
+    Color txColor,
+    String text,
+    Color textColor,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(

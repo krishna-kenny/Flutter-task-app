@@ -56,7 +56,8 @@ class TasksService {
       Subject subject = Subject(
         name: subjectName,
         color: uniqueColors.removeAt(0),
-        iconAssetPath: 'assets/icons/subject_icon.png', // Replace with actual icon path
+        iconAssetPath: 'assets/icons/subject_icon.png',
+        // Replace with actual icon path
         numTasksLeft: numTasks,
       );
       subjectList.add(subject);
@@ -64,7 +65,6 @@ class TasksService {
 
     return subjectList;
   }
-
 
   // Generate a list of unique random colors
   // Generate a list of unique random colors
@@ -103,7 +103,6 @@ class TasksService {
     return colors;
   }
 
-
   static Future<void> _addNewSubjectIfNotExists(String subjectName) async {
     List<Subject> subjectList = await getSubjectList();
     bool subjectExists =
@@ -112,7 +111,11 @@ class TasksService {
     if (!subjectExists) {
       // Add a new subject with a random color
       Color randomColor = _generateUniqueColors(1).first;
-      Subject newSubject = Subject(name: subjectName, color: randomColor, iconAssetPath: 'assets/default_icon.png', numTasksLeft: 1);
+      Subject newSubject = Subject(
+          name: subjectName,
+          color: randomColor,
+          iconAssetPath: 'assets/default_icon.png',
+          numTasksLeft: 1);
       subjectList.add(newSubject);
     }
   }
@@ -150,5 +153,22 @@ class TasksService {
     // If the loop completes without finding the specified id, then throw
     // exception
     throw TaskNotFoundException();
+  }
+
+  static Future<List<Task>> getDaySubjectTasks(int selectedDay, String subject) async {
+    List<Task> dayTaskList = [];
+
+    for (int i = 0; i < taskList.length; i++) {
+      if (taskList[i].timeStart.day <= selectedDay &&
+          taskList[i].timeEnd.day >= selectedDay &&
+          taskList[i].title == subject) {
+        dayTaskList.add(taskList[i]);
+      }
+    }
+
+    // Sort the list based on Task.startTime
+    dayTaskList.sort((a, b) => a.timeStart.compareTo(b.timeStart));
+
+    return dayTaskList;
   }
 }

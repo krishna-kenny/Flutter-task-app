@@ -31,12 +31,6 @@ class _DatePickerState extends State<DatePicker> {
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20),
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
-        ),
-      ),
       child: SingleChildScrollView(
         // Wrap the ListView in a SingleChildScrollView
         scrollDirection: Axis.horizontal,
@@ -55,7 +49,7 @@ class _DatePickerState extends State<DatePicker> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: selectedIndex == index
-                      ? Colors.grey.withOpacity(0.7)
+                      ? Colors.orange.withOpacity(0.7)
                       : null,
                 ),
                 child: Column(

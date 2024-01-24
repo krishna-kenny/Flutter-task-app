@@ -27,15 +27,17 @@ class TaskTimeline extends StatelessWidget {
         height: 120,
         width: 10,
         padding: const EdgeInsets.symmetric(horizontal: 15),
+        margin: const EdgeInsets.only(top: 20),
         child: Row(
           children: [
-            _buildTimeline(subjectColor.withOpacity(0.8), isFirst, isLast),
-            (task == null)
-                ? const SizedBox(
-                    height: 30,
-                  )
-                : Expanded(
-                    child: GestureDetector(
+            _buildTimeline(subjectColor, isFirst, isLast),
+            if (task == null) // Display message when there are no tasks
+              const Center(
+                child: Text('No tasks today!'),
+              )
+            else // Display task information
+              Expanded(
+                child: GestureDetector(
                       onLongPress: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
@@ -80,28 +82,31 @@ class TaskTimeline extends StatelessWidget {
 
   Widget _buildTimeline(Color color, bool isFirst, bool isLast) {
     return SizedBox(
-        height: 120,
-        width: 20,
-        child: TimelineTile(
-          lineXY: 0,
-          isFirst: isFirst,
-          isLast: isLast,
-          indicatorStyle: IndicatorStyle(
-              width: 15,
-              indicator: Container(
-                  decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(width: 5, color: color),
-              ))),
-          afterLineStyle: LineStyle(
-            thickness: 2,
-            color: color,
+      height: 120,
+      width: 20,
+      child: TimelineTile(
+        lineXY: 0,
+        isFirst: isFirst,
+        isLast: isLast,
+        indicatorStyle: IndicatorStyle(
+          width: 15,
+          indicator: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(width: 5, color: color),
+            ),
           ),
-          beforeLineStyle: LineStyle(
-            thickness: 2,
-            color: color,
-          ),
-        ));
+        ),
+        afterLineStyle: LineStyle(
+          thickness: 2,
+          color: color,
+        ),
+        beforeLineStyle: LineStyle(
+          thickness: 2,
+          color: color,
+        ),
+      ),
+    );
   }
 
   Widget _buildCard({
@@ -128,7 +133,7 @@ class TaskTimeline extends StatelessWidget {
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               IconButton(
-                icon: Icon(Icons.check, color: Colors.green),
+                icon: const Icon(Icons.check, color: Colors.green),
                 onPressed: onDelete,
               ),
             ],

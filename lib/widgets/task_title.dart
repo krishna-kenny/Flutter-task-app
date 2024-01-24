@@ -15,7 +15,7 @@ class TaskTitle extends StatelessWidget {
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: Colors.white, // Set text color to white
+              color: Colors.black87, // Set text color to white
             ),
           ),
           Container(

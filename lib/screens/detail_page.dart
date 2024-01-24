@@ -6,7 +6,10 @@ import 'package:studize_interview/services/tasks/tasks_classes.dart';
 import 'package:studize_interview/services/tasks/tasks_service.dart';
 
 class DetailPage extends StatefulWidget {
-  const DetailPage({super.key});
+  final Key? key;
+  final Subject sub;
+
+  const DetailPage({this.key, required this.sub}) : super(key: key);
 
   @override
   State<DetailPage> createState() => _DetailPageState();
@@ -40,61 +43,78 @@ class _DetailPageState extends State<DetailPage> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: TasksService.getDayTasks(selectedDay.day),
+      future: (widget.sub.name == 'All tasks')
+          ? TasksService.getDayTasks(selectedDay.day)
+          : TasksService.getDaySubjectTasks(selectedDay.day, widget.sub.name),
       builder: (context, snapshot) {
-        final List<Task> taskList = snapshot.data!;
-        return Scaffold(
-          appBar: AppBar(title: const Text('Tasks')),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () {
-              _openNewTaskModal(context);
-            },
-            label: const Text('New Task'),
-            icon: const Icon(Icons.edit),
-          ),
-          body: CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: Container(
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(30),
-                      topLeft: Radius.circular(30),
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      DatePicker(
-                        callback: (selectedDay) =>
-                            setState(() => this.selectedDay = selectedDay),
-                      ),
-                      const TaskTitle(),
-                    ],
-                  ),
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          return const Center(
+            child: Text("Error: Could not fetch tasks."),
+          );
+        } else {
+          final List<Task> taskList = snapshot.data as List<Task>;
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(widget.sub.name,
+                  style:
+                      const TextStyle(color: Color(0xFF00695C), fontSize: 24)),
+              flexibleSpace: Container(
+                decoration: const BoxDecoration(
+                  color: Color(0xFF80D8FF),
                 ),
               ),
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (_, index) => TaskTimeline(
-                    task: taskList[index],
-                    subjectColor: taskList[index].color,
-                    isFirst: index == 0,
-                    isLast: index == taskList.length - 1,
-                    refreshCallback: () {
-                      setState(() {});
-                    },
+            ),
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: () {
+                _openNewTaskModal(context);
+              },
+              label: const Text('New Task'),
+              icon: const Icon(Icons.edit),
+            ),
+            body: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFE0F7FA),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        DatePicker(
+                          callback: (selectedDay) =>
+                              setState(() => this.selectedDay = selectedDay),
+                        ),
+                        const TaskTitle(),
+                      ],
+                    ),
                   ),
-                  childCount: taskList.length,
                 ),
-              )
-            ],
-          ),
-        );
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (_, index) => TaskTimeline(
+                      task: taskList.isEmpty ? null : taskList[0],
+                      subjectColor: taskList[index].color,
+                      isFirst: index == 0,
+                      isLast: index == taskList.length - 1,
+                      refreshCallback: () {
+                        setState(() {});
+                      },
+                    ),
+                    childCount: taskList.length,
+                  ),
+                )
+              ],
+            ),
+          );
+        }
       },
     );
   }
@@ -108,7 +128,6 @@ class NewTaskForm extends StatefulWidget {
   @override
   _NewTaskFormState createState() => _NewTaskFormState();
 }
-
 
 class _NewTaskFormState extends State<NewTaskForm> {
   final TextEditingController _titleController = TextEditingController();
@@ -180,7 +199,7 @@ class _NewTaskFormState extends State<NewTaskForm> {
                 description: description,
                 timeStart: _startTime,
                 timeEnd: _endTime,
-                color: Colors.lightGreenAccent,
+                color: Colors.orangeAccent,
               ));
 
               // Call the callback to notify the parent about the task addition
